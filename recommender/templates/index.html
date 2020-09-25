@@ -1,0 +1,24 @@
+{% extends "base.html" %}  
+  
+{% block title %}Music Recommender{% endblock %} 
+
+{% block content %}
+
+<ul class="list-group">
+
+    {% for movie_info in movie_info_list %}    
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-md-2">
+                    <img style="max-height: 300px; max-width:500px; width: 100%;cursor: pointer;height: auto; position" src={{movie_info['thumbnail']}} alt=""  
+                        onclick="window.open('media/{{movie_info['song_id']}}/{{movie_info['movie_id']}}; ', 'MsgWindow', 
+                        specs='height=600,width=560,top=200,left=1000');location.reload();">
+
+                </div>
+                <div class="col-md-4"><h4>{{movie_info['title']}}</h4><br>{{movie_info['desc']}}</div>
+            </div>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock content %}
+
