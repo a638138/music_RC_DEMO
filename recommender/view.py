@@ -4,7 +4,7 @@ from recommender.model import UserInfo, SessionInfo
 from recommender.form import FormRegister, FormLogin
 from rec_model import rec_model
 from sqlalchemy import func
-from flask import render_template, flash, request, redirect, url_for, session
+from flask import render_template, flash, request, redirect, url_for, session, make_response, jsonify
 from flask_bootstrap import Bootstrap
 from flask_login import login_user, current_user, login_required, logout_user
 import pandas as pd
@@ -28,35 +28,66 @@ def register():
 @app.route('/')  
 @login_required 
 def index():
-    if current_user.is_newuser:
-        movie_info_list = rec_model.pop_predict()
-    else:
-        table_df = pd.read_sql_table('SessionInfo', con=db.engine)
-        user_data = table_df[table_df.u_id == current_user.id]
-        movie_info_list = rec_model.HRNN_predict(user_data)
-    # if movie_info_list == None:
-    #     movie_info_list = movie_info_list = [{'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'}]
-    itemnum = len(movie_info_list)
+    # if current_user.is_newuser:
+    #     movie_info_list = rec_model.pop_predict()
+    # else:
+    #     table_df = pd.read_sql_table('SessionInfo', con=db.engine)
+    #     user_data = table_df[table_df.u_id == current_user.id]
+    #     # movie_info_list = rec_model.HRNN_predict(user_data)
+    # # if movie_info_list == None:
+    # movie_info_list = movie_info_list = [
+    #         {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+    #         {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+    #         {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+    #         {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+    #         {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'}
+    #         ]
+    # itemnum = len(movie_info_list)
 
-    return render_template('index.html', movie_info_list=movie_info_list, itemnum=itemnum)
 
-@app.route('/media/<song_id>/<movie_id>')  
+    # return render_template('index.html', movie_info_list=movie_info_list, itemnum=itemnum)
+    return render_template('index.html')
+
+
+
+
+@app.route('/media/<user_id>', methods=['GET', 'POST'])  
+# @app.route('/media/<song_id>/<movie_id>', methods=['GET', 'POST'])  
 @login_required 
-def media(song_id, movie_id):
-    update_user = UserInfo.query.filter_by(email=current_user.email).first()
-    update_user.is_newuser = False
-    u_id = update_user.id
-    session_song_data = SessionInfo(u_id=u_id,
-                            session_id = int(session['current_session_id']),
-                            counter = int(session['counter']),
-                            song_id = int(song_id),
-        )
-    session['counter'] = str(int(session['counter'])+1)
-    db.session.add(session_song_data)
-    db.session.add(update_user)
-    db.session.commit()
+# def media(song_id, movie_id):
+def media(user_id):
 
-    return redirect(f"https://www.youtube.com/watch?v={movie_id}", code=302)
+    if request.method == 'POST':
+        update_user = UserInfo.query.filter_by(id=user_id).first()
+        update_user.is_newuser = False
+        u_id = update_user.id
+        session_song_data = SessionInfo(u_id=u_id,
+                                session_id = int(session['current_session_id']),
+                                counter = int(session['counter']),
+                                song_id = int(request.form.get('song_id')),
+            )
+        session['counter'] = str(int(session['counter'])+1)
+        db.session.add(session_song_data)
+        db.session.add(update_user)
+        db.session.commit()
+
+    # if current_user.is_newuser:
+    #     movie_info_list = rec_model.pop_predict()
+    # else:
+    #     table_df = pd.read_sql_table('SessionInfo', con=db.engine)
+    #     user_data = table_df[table_df.u_id == current_user.id]
+    #     movie_info_list = rec_model.HRNN_predict(user_data)
+    # if movie_info_list == None:
+    movie_info_list = movie_info_list = [
+            {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+            {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+            {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+            {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+            {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'}
+            ]
+    # movie_info_list = rec_model.pop_predict()
+    # print(movie_info_list)
+    return jsonify(movie_info_list)
   
 @app.route('/login', methods=['GET', 'POST'])
 def login():

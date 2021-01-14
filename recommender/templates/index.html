@@ -4,21 +4,81 @@
 
 {% block content %}
 
-<ul class="list-group">
+<div id="container">
+    <div id="yt_div" class="embed-responsive embed-responsive-16by9" style="display: none;">
+        <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ movie_id }}"  -->
+            <iframe id="yt_display" width="100%" height="100%" src="" 
+            frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture allowfullscreen" 
+            style="margin-left: auto; margin-right:auto;"
+            >
+        </iframe>
+    </div>
 
-    {% for movie_info in movie_info_list %}    
-        <li class="list-group-item">
-            <div class="row">
-                <div class="col-md-2">
-                    <img style="max-height: 300px; max-width:500px; width: 100%;cursor: pointer;height: auto; position" src={{movie_info['thumbnail']}} alt=""  
-                        onclick="window.open('media/{{movie_info['song_id']}}/{{movie_info['movie_id']}}; ', 'MsgWindow', 
-                        specs='height=600,width=560,top=200,left=1000');location.reload();">
+    <ul class="list-group">
+        
+        {% for n in range(5) %}   
+        <li id=movie_{{n}} class="list-group-item">
+            <form>
+                <div id=movie_{{n}} class="row">
+                    <div class="col-md-2">
 
+                        {# <!-- <img style="max-height: 300px; max-width:500px; width: 100%;cursor: pointer;height: auto; position" src={{movie_info['thumbnail']}} alt=""> --> #}
+                        {# <!-- onclick="window.open('media/{{movie_info['song_id']}}/{{movie_info['movie_id']}}; ', 'MsgWindow', specs='height=600,width=560,top=200,left=1000');location.reload();"> --> #}
+
+                        <img id=movie_{{n}}_img style="max-height: 300px; max-width:500px; width: 100%;cursor: pointer;height: auto; margin: auto; " alt="" src="">
+                    </div>
+                    <div class="col-md-4">
+                        <h4 id=movie_{{n}}_h4></h4><br>
+                        <p id=movie_{{n}}_p></p>
+                    </div>
                 </div>
-                <div class="col-md-4"><h4>{{movie_info['title']}}</h4><br>{{movie_info['desc']}}</div>
-            </div>
+
+                <input id=movie_{{n}}_song_id type="hidden" name="movie_{{loop.index}}_sond_id">
+                <input id=movie_{{n}}_movie_id type="hidden" name="movie_{{loop.index}}_movie_id">
+            </form>
         </li>
-    {% endfor %}
-</ul>
+        {% endfor %}
+
+    </ul>
+</div>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    
+    function get_playlist()
+    {
+        $.get('media/{{current_user.id}}', function(data){
+            {% for n in range(5) %}
+                $(function(){
+                    var song_id;
+                    var movie_id;
+                    $("#movie_{{n}}").click(function(){
+                        song_id = $(this).children("form").children("#movie_{{n}}_song_id").attr("value");
+                        movie_id = $(this).children("form").children("#movie_{{n}}_movie_id").attr("value");
+                        $.ajax({
+                            type : 'POST',
+                            url : 'media/{{current_user.id}}',
+                            data : {'song_id':song_id, 'movie_id':movie_id}
+                        });
+                        {% for m in range(5) %}
+                            $("#movie_{{m}}").off();
+                        {% endfor %}
+                        get_playlist();
+                        $("#yt_div").show('slow');
+                        $("#yt_display").attr("src", "https://www.youtube.com/embed/" + data[{{n}}].movie_id);
+                        $("#yt_display").css('display','block');
+                    });
+                });
+                $("#movie_{{n}}_img").attr("src", data[{{n}}].thumbnail);
+                $("#movie_{{n}}_h4").text(data[{{n}}].title);
+                $("#movie_{{n}}_p").text(data[{{n}}].desc);
+                $("#movie_{{n}}_song_id").attr("value", data[{{n}}].song_id);
+                $("#movie_{{n}}_movie_id").attr("value", data[{{n}}].movie_id);
+            {% endfor %}
+        });
+    };
+
+    get_playlist();
+
+</script>
 {% endblock content %}
 

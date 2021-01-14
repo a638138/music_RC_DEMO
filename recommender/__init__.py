@@ -6,6 +6,7 @@ from config import Config
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
+app._static_folder = './static/'
 app.config.from_object(Config)
 bcrypt = Bcrypt(app)
 bootstrap = Bootstrap(app)

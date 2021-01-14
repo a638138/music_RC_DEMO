@@ -1,0 +1,2 @@
+# music_RC_DEMO
+rec_model主要為深度學習模型的部分，recommender主要為推薦系統Server以及介面的部分

@@ -1,0 +1,8 @@
+*.docx
+*.csv
+*.h5
+*.hdf
+*.sqlite
+config.py
+rec_model.py
+__pycache__
