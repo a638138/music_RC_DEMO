@@ -52,6 +52,9 @@
                     var song_id;
                     var movie_id;
                     $("#movie_{{n}}").click(function(){
+                        $("html, body").animate({
+                            scrollTop:0 
+                        }, 1000)
                         song_id = $(this).children("form").children("#movie_{{n}}_song_id").attr("value");
                         movie_id = $(this).children("form").children("#movie_{{n}}_movie_id").attr("value");
                         $.ajax({

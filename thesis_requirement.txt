@@ -3,7 +3,6 @@ pydot
 pydotplus
 pytables
 tensorflow==1.12.0
-tensorflow-gpu==1.12.0
 tqdm
 pandas==1.0.1
 requests
@@ -13,3 +12,6 @@ flask-sqlalchemy
 flask-login
 flask-bcrypt
 flask-wtf
+psycopg2
+libiconv
+uwsgi

@@ -70,21 +70,22 @@ def media(user_id):
         db.session.add(session_song_data)
         db.session.add(update_user)
         db.session.commit()
-
-    # if current_user.is_newuser:
-    #     movie_info_list = rec_model.pop_predict()
-    # else:
-    #     table_df = pd.read_sql_table('SessionInfo', con=db.engine)
-    #     user_data = table_df[table_df.u_id == current_user.id]
-    #     movie_info_list = rec_model.HRNN_predict(user_data)
+        return '', 204
+        
+    if current_user.is_newuser:
+        movie_info_list = rec_model.pop_predict()
+    else:
+        table_df = pd.read_sql_table('SessionInfo', con=db.engine)
+        user_data = table_df[table_df.u_id == current_user.id]
+        movie_info_list = rec_model.HRNN_predict(user_data)
     # if movie_info_list == None:
-    movie_info_list = movie_info_list = [
-            {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
-            {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
-            {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
-            {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
-            {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'}
-            ]
+    # movie_info_list = movie_info_list = [
+    #         {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+    #         {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+    #         {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+    #         {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'},
+    #         {'song_id':60973, 'movie_id':'rVFR7wDZT9A', 'title':'Leroy Anderson: Ritvélin (The Tyd Symphony Orchestra Bernharður Wilkinson, conductor Steef van Oosterhout, soloist on a typewriter Ævar vísindamaður, ...', 'desc':'Provided to YouTube by Universal Music Group Peace/Dolphin Dance', 'thumbnail':'https://i.ytimg.com/vi/iaWS3CGVVJg/hqdefault.jpg'}
+    #         ]
     # movie_info_list = rec_model.pop_predict()
     # print(movie_info_list)
     return jsonify(movie_info_list)

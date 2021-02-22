@@ -1,2 +1,15 @@
 # music_RC_DEMO
-rec_model主要為深度學習模型的部分，recommender主要為推薦系統Server以及介面的部分
+
+深度學習音樂推薦系統
+2020/4~2020/7
+研究所論文系統延伸 - 音樂推薦系統
+- 基於深度學習技術RNN模型設計推薦系統
+- Python flask結合jinja設計使用者介面
+- 利用Ajax及jquery優化使用者體驗
+- 利用模型得到的推薦清單結合Youtube Data API來提供音樂推薦服務
+- 利用ORM sqlalchemy存取資料庫
+- Demo: https://youtu.be/r3OZ-CzoqHI
+
+
+## 主介面
+![image](music_fg.png)

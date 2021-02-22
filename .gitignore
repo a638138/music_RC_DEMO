@@ -4,3 +4,7 @@
 *.hdf
 *.sqlite
 __pycache__
+*.mp4
+*.ini
+start.txt
+wsgi.py
