@@ -12,6 +12,8 @@
 - 利用ORM sqlalchemy存取資料庫
 - Demo: https://youtu.be/r3OZ-CzoqHI
 
+## 系統架構
+![image](system.png)
 
 ## 主介面
 ![image](music_fg.png)
